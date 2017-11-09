@@ -2,10 +2,9 @@ package com.edibershatsky.myreddit
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
-import android.support.v7.widget.Toolbar
-import android.view.View
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -13,15 +12,27 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-//        setSupportActionBar(toolbar)
+        if (savedInstanceState == null) {
+            changeFragment(NewsFragment())
+        }
+    }
 
-        val fab = findViewById<FloatingActionButton>(R.id.fab)
+    private fun changeFragment(f: Fragment, cleanStack: Boolean = false) {
+        val ft = supportFragmentManager.beginTransaction()
+        if (cleanStack) {
+            clearBackStack()
+        }
+        ft.setCustomAnimations(
+                R.anim.abc_fade_in, R.anim.abc_fade_out, R.anim.abc_popup_enter, R.anim.abc_popup_exit)
+        ft.replace(R.id.activity_base_content, f)
+        ft.addToBackStack(null)
+        ft.commit()    }
 
-
-        fab.setOnClickListener({v ->
-            Snackbar.make(v, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        })
+    fun clearBackStack() {
+        val manager = supportFragmentManager
+        if (manager.backStackEntryCount > 0) {
+            val first = manager.getBackStackEntryAt(0)
+            manager.popBackStack(first.id, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        }
     }
 }
